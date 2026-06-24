@@ -1,0 +1,327 @@
+{
+  "name": "AI Expense Tracker",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-safeguard-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        256,
+        224
+      ],
+      "id": "c21f53b9-2848-4c40-b3af-0f374f9060d1",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "TdFFEfxXTsQW8NUq",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.body?.Body || $json.Body || \"\";\n\nreturn [\n  {\n    json: {\n      text: text\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        0
+      ],
+      "id": "81a47c12-567a-4752-9490-a3c4a9692a94",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const webhook = $node[\"Webhook\"].json;\n\n// AI output is inside \"output\" field\nlet raw = $json.output;\n\n// parse JSON string → object\nlet ai = JSON.parse(raw);\n\nreturn [\n  {\n    json: {\n      to: webhook.body?.From || webhook.From || \"\",\n\n      amount: ai.amount,\n      type: ai.type,\n      category: ai.category,\n      item: ai.item,\n      people: ai.people,\n\n      date: new Date().toISOString()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        0
+      ],
+      "id": "73d86181-bfb5-4831-98af-d79e0a18a0eb",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "from": "+14155238886",
+        "to": "=+919596517411",
+        "toWhatsapp": true,
+        "message": "=💗━━━━━━━━━━━━━━━━━━\n💸 TRANSACTION SAVED\n━━━━━━━━━━━━━━━━━━💗\n\n💰 Amount   : {{$json.amount}}\n🍛 Category : {{$json.category}}\n🧾 Item     : {{$json.item}}\n👤 Type     : {{$json.type}}\n\n💗━━━━━━━━━━━━━━━━━━",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        0
+      ],
+      "id": "69f0912c-c4d1-41dd-a9d0-b2b3f145e72e",
+      "name": "Send an SMS/MMS/WhatsApp message",
+      "credentials": {
+        "twilioApi": {
+          "id": "kSUykz7QiSLzAFna",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Q-KUXxVjFOovI25sAe9QSPkLLW1rNw5zTT9qRjJBgL8",
+          "mode": "list",
+          "cachedResultName": "AI Expense Tracker from WhatsApp Messages",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q-KUXxVjFOovI25sAe9QSPkLLW1rNw5zTT9qRjJBgL8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q-KUXxVjFOovI25sAe9QSPkLLW1rNw5zTT9qRjJBgL8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Amount": "={{$json.amount}}",
+            "type": "={{$json.type}}",
+            "category": "={{$json.category}}",
+            "item": "={{$json.item}}",
+            "people": "={{$json.people}}",
+            "date": "={{$json.date}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "item",
+              "displayName": "item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "people",
+              "displayName": "people",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        960,
+        0
+      ],
+      "id": "f5ca7e92-0900-4893-b909-c3de2796fc9a",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "vqmQDSNvCuHtoeBs",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const webhook = $node[\"Webhook\"].json;\n\n// 🔥 get AI output from AI Agent node (IMPORTANT FIX)\nconst aiRaw = $node[\"AI Agent\"].json.output;\n\n// safety check\nif (!aiRaw) {\n  throw new Error(\"AI output is missing\");\n}\n\n// parse JSON string\nconst ai = JSON.parse(aiRaw);\n\nreturn [\n  {\n    json: {\n      to: webhook.From,\n\n      amount: ai.amount,\n      type: ai.type,\n      category: ai.category,\n      item: ai.item,\n      people: ai.people,\n\n      date: new Date().toISOString()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "1c2911ea-2ffe-4a2f-91cc-f28d29b15d0e",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-expense",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "b0c44867-e4ea-47a6-b4eb-373e90defa89",
+      "name": "Webhook",
+      "webhookId": "e49aca0b-a084-478d-83aa-69236debee35"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an Indian expense extractor.\n\nExtract data from message.\n\nReturn ONLY valid JSON.\n\nMessage:\n{{$json.text}}\n\nOutput format:\n{\n  \"amount\": number,\n  \"category\": \"food, transport, shopping, grocery, entertainment, salary, social, other\",\n  \"item\": \"short item name\",\n  \"people\": \"person name or empty string\",\n  \"type\": \"expense or income\"\n}\n\nRules:\n- Understand Hinglish (parantha, chai, auto, etc.)\n- NEVER return empty values for amount/item if possible\n- Always return JSON only\n- No explanation, no markdown",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "abbad6f3-c5da-41ca-b0e6-79c59bcdc1cc",
+      "name": "AI Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an SMS/MMS/WhatsApp message": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "7e738539-a8da-4648-a14b-8344d0c09086",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3236ed342c84aad3c2fbeafdf5a30966a7e88257a91a06992c23371d0b67597e"
+  },
+  "id": "NzdDZSyOO4tf3QiN",
+  "tags": []
+}
